@@ -36,13 +36,29 @@ footer{padding:22px 0;text-align:center;color:#888;border-top:1px solid #ffffff1
 .lightbox-close{top:15px;right:25px}.lightbox-prev{left:15px}.lightbox-next{right:15px}
 .lightbox-counter{position:absolute;bottom:15px;color:var(--white);font-size:14px}
 @media(max-width:520px){.gallery-img{height:230px}.lightbox img{max-width:78%}}
+
+/* Responsive mobile navigation */
+.nav-controls{display:flex;align-items:center;gap:10px}
+.menu-toggle{display:none;background:transparent;color:var(--gold2);border:1px solid var(--gold);border-radius:7px;min-width:43px;min-height:43px;font-size:24px;line-height:1;cursor:pointer}
+@media(max-width:520px){
+ nav{position:relative;align-items:center;gap:8px;flex-wrap:wrap}
+ .brand{gap:7px;font-size:clamp(12px,3.3vw,17px);letter-spacing:1px;min-width:0}
+ .brand img{width:40px;height:40px}
+ .nav-controls{gap:7px}
+ .lang{padding:6px 9px;font-size:13px}
+ .menu-toggle{display:block}
+ .links{display:none;position:absolute;top:100%;left:0;right:0;z-index:20;background:#191b20;border:1px solid #c9a45c70;border-radius:0 0 9px 9px;padding:12px;box-shadow:0 12px 25px #0008;flex-direction:column;align-items:stretch;gap:0;font-size:15px}
+ .links.open{display:flex}
+ .links a{display:block;padding:10px 14px;border-bottom:1px solid #ffffff18}
+ .links a:last-child{border-bottom:0}
+}
 </style>
 </head>
 <body>
 <header><div class="wrap"><nav>
 <a class="brand" href="#home"><img src="assets/archvision-logo.png" alt="ARCHVISION logo"><span>ARCHVISION</span></a>
-<div class="links"><a href="#home" data-ar="الرئيسية" data-en="Home">الرئيسية</a><a href="#about" data-ar="من نحن" data-en="About">من نحن</a><a href="#services" data-ar="خدماتنا" data-en="Services">خدماتنا</a><a href="#portfolio" data-ar="أعمالنا" data-en="Portfolio">أعمالنا</a><a href="#contact" data-ar="تواصل معنا" data-en="Contact">تواصل معنا</a></div>
-<button class="lang" id="langBtn">English</button>
+<div class="links" id="navLinks"><a href="#home" data-ar="الرئيسية" data-en="Home">الرئيسية</a><a href="#about" data-ar="من نحن" data-en="About">من نحن</a><a href="#services" data-ar="خدماتنا" data-en="Services">خدماتنا</a><a href="#portfolio" data-ar="أعمالنا" data-en="Portfolio">أعمالنا</a><a href="#contact" data-ar="تواصل معنا" data-en="Contact">تواصل معنا</a></div>
+<div class="nav-controls"><button class="lang" id="langBtn" type="button">English</button><button class="menu-toggle" id="menuToggle" type="button" aria-label="فتح القائمة" aria-controls="navLinks" aria-expanded="false">☰</button></div>
 </nav></div></header>
 <main>
 <section class="hero" id="home"><div class="wrap"><div class="hero-inner">
@@ -133,6 +149,30 @@ document.addEventListener('keydown',e=>{
   else if(!e.shiftKey&&i===2){e.preventDefault();buttons[0].focus();}
  }
 });
+
+// Mobile menu: works in Arabic and English.
+const menuToggle=document.getElementById('menuToggle');
+const navLinks=document.getElementById('navLinks');
+function closeMenu(){
+ navLinks.classList.remove('open');
+ menuToggle.setAttribute('aria-expanded','false');
+ menuToggle.textContent='☰';
+ menuToggle.setAttribute('aria-label',english?'Open menu':'فتح القائمة');
+}
+menuToggle.addEventListener('click',()=>{
+ const open=navLinks.classList.toggle('open');
+ menuToggle.setAttribute('aria-expanded',String(open));
+ menuToggle.textContent=open?'×':'☰';
+ menuToggle.setAttribute('aria-label',open?(english?'Close menu':'إغلاق القائمة'):(english?'Open menu':'فتح القائمة'));
+});
+navLinks.querySelectorAll('a').forEach(link=>link.addEventListener('click',closeMenu));
+document.addEventListener('click',event=>{
+ if(!navLinks.contains(event.target)&&!menuToggle.contains(event.target))closeMenu();
+});
+document.addEventListener('keydown',event=>{
+ if(event.key==='Escape'&&navLinks.classList.contains('open')){closeMenu();menuToggle.focus();}
+});
+window.addEventListener('resize',()=>{if(window.innerWidth>520)closeMenu();});
 </script>
 </body>
 </html>
